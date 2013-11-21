@@ -30,6 +30,15 @@
 		<script type="text/javascript" src="sb-1.2.0.js"></script>
 
 		<script type="text/javascript">
+			sb = new Spacebrew.Client('192.168.1.175', 'Resistor Read');
+        	sb.addSubscribe('resistor value', 'string');
+        	sb.connect();
+        	sb.onStringMessage = function onStringMessage(name, value){
+	        	if(name=='resistor value') {
+	        		console.log("Resistor Value: "+value);
+	        		$("#resistance").val(value);
+	        	}
+			}
 
 			$(function() {
 				var colourMap = {
