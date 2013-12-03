@@ -8,35 +8,32 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
 
-
-
 	</head>
 	<body>
-    	<div class="left">
+
+    	<div id="band4" class="left">
 			<object id="res4" class="emb4" data="resistor.svg" width="500" height="500" type="image/svg+xml"></object>
 		</div>
-		<div class="right">
+		<div id="band5" class="right">
 			<object id="res5" class="emb5" data="resistor5.svg" width="500" height="500" type="image/svg+xml"></object>
 		</div>
-
 		<div class="center">
-			<input id="resistance" class="input"/>
-			<button id="btn4" class="button">4 BAND</button>
-			<button id="btn5" class="button">5 BAND</button>
+			<input id="resistance" class="input" placeholder="resistor value, tolerance | example: 220k, ±5%"/>
+			<button id="btn" class="button" >RESIST</button>
 		</div>
 
 		<script src="jQuery.js"></script>
 		<script src="resistor.js"></script>
 		<script type="text/javascript" src="sb-1.2.0.js"></script>
-
 		<script type="text/javascript">
-			sb = new Spacebrew.Client('192.168.1.175', 'Resistor Read');
+			sb = new Spacebrew.Client('192.168.1.190', 'Resistor Read');
         	sb.addSubscribe('resistor value', 'string');
         	sb.connect();
         	sb.onStringMessage = function onStringMessage(name, value){
 	        	if(name=='resistor value') {
 	        		console.log("Resistor Value: "+value);
 	        		$("#resistance").val(value);
+					$("#btn").click();
 	        	}
 			}
 
@@ -56,9 +53,9 @@
 					silver: "#cccccc"
 				};
 				
-				$("#btn4").on("click",go4);
-				$("#btn5").on("click",go5);
-
+				$("#btn").on("click",go4);
+				$("#btn").on("click",go5);
+				
 				function go4(){
 					var colours = getColoursFromInput();
 
@@ -93,6 +90,30 @@
 					var band = svg.getSVGDocument().querySelector('#band' + index);
 					return band;
 				}
+
+				$("#resistance").on("input", function() {
+					updateResistorInput();
+				});
+
+				function updateResistorInput() {
+
+					var $res = $('#resistance');
+					var resistance = $res.val();
+					var matches = resistance.match( /^\s*([\d.]+) ?[kmKM]?\s*$/ );
+					console.log( matches );
+
+					if( matches && matches.length > 0 ) {
+						$res.addClass('correct');
+						$res.removeClass('incorrect');
+						go4();
+						go5();
+					}
+					else {
+						$res.addClass('incorrect');
+						$res.removeClass('correct');
+					}
+				}
+
 			});
 		</script>
 	</body>
