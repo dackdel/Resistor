@@ -34,8 +34,7 @@
             '100':'brown',
             '200':'red',
             '500':'gold',
-            '1000':'silver',
-            '2000':''
+            '1000':'silver'
         };
         var val = (+tol) * 100;
         if(val in tolerance_color){
@@ -74,7 +73,8 @@
      * @param  {interger}   mul      multiplier([0,3,6])
      * @return {Dict object}         band color
      */
-    exports.resistorToColor = function (resistor_value, tol){
+    exports.resistorToColor = function (resistor_value, tol, bands){
+        console.log("Bands: " + bands);
         var digit = [0, 0, 0],
             digits = [],
             dec = -1,
@@ -91,6 +91,12 @@
 
         //calculating number of digit to consider before taking the digit for multiplier
         significant_digit = tol > 2 ? 2 : 3;
+        //allocating the bands
+        if (bands == 4) {
+            significant_digit = 2;
+        }else{
+            significant_digit = 3;
+        }
 
         //check if resistor value exist or not...    
         if (!resistor_value){
@@ -139,6 +145,7 @@
             'band4':getcolor(multiplier),
             'band5':getToleranceColor(tol)
         };
+
     };
 
 })(typeof exports === "undefined" ?this['resistor'] = {}:exports);

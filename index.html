@@ -12,13 +12,15 @@
 	<body>
 
     	<div id="band4" class="left">
+    		<header><h2>4 Band</h2></header>
 			<object id="res4" class="emb4" data="resistor.svg" width="500" height="500" type="image/svg+xml"></object>
 		</div>
 		<div id="band5" class="right">
+			<header><h2>5 Band</h2></header>
 			<object id="res5" class="emb5" data="resistor5.svg" width="500" height="500" type="image/svg+xml"></object>
 		</div>
 		<div class="center">
-			<input id="resistance" class="input" placeholder="resistor value, tolerance | example: 220k, ±5%"/>
+			<input id="resistance" class="input" placeholder="Example: 220k, 5%"/>
 			<button id="btn" class="button" >RESIST</button>
 		</div>
 
@@ -26,16 +28,6 @@
 		<script src="resistor.js"></script>
 		<script type="text/javascript" src="sb-1.2.0.js"></script>
 		<script type="text/javascript">
-			sb = new Spacebrew.Client('192.168.1.190', 'Resistor Read');
-        	sb.addSubscribe('resistor value', 'string');
-        	sb.connect();
-        	sb.onStringMessage = function onStringMessage(name, value){
-	        	if(name=='resistor value') {
-	        		console.log("Resistor Value: "+value);
-	        		$("#resistance").val(value);
-					$("#btn").click();
-	        	}
-			}
 
 			$(function() {
 				var colourMap = {
@@ -52,12 +44,55 @@
 					gold: "#cc9832",
 					silver: "#cccccc"
 				};
+			
+				sb = new Spacebrew.Client('10.42.3.158', 'Resistor Read');
+	        	sb.addSubscribe('resistor value', 'string');
+	        	sb.connect();
+	        	sb.onStringMessage = function onStringMessage(name, value){
+		        	if(name=='resistor value' && !$("#resistance").is(":focus")) {
+		        		console.log("Resistor Value: "+value);
+		        		$("#resistance").val(value);
+						$("#btn").click();
+		        	}
+		        };
+	    	
+		    	var svg4,svg5;
+				var current;
+		    	var bands4 = [], bands5 = [];
+
+		    	function svgLoaded(svg, bands){ 
+	    			for (var i = 0; i<bands; i++) {
+	    				var band = svg.getSVGDocument().querySelector("#band"+(i+1) );
+	    				band.onclick = getValueFromColours;			
+	    			}
+		    			
+				}
+
+				function getValueFromColours(e) {
+					current = e;
+					fill = e.target.getAttribute("fill");
+					if (fill) {
+						console.log(fill);
+						r = '#'+Math.floor(Math.random()*16777215).toString(16);;
+						e.target.setAttribute("fill", r);
+					}
+				}
+
+				
+				svg4 = document.querySelector("#res4");
+				svg5 = document.querySelector("#res5");
+				svg4.addEventListener('load', function(){
+					svgLoaded(svg4, 4);
+				});
+				svg5.addEventListener('load', function(){
+					svgLoaded(svg5, 5);
+				});
 				
 				$("#btn").on("click",go4);
 				$("#btn").on("click",go5);
 				
 				function go4(){
-					var colours = getColoursFromInput();
+					var colours = getColoursFromInput(4);
 
 					getBand(4, 1).setAttribute("fill", colourMap[colours.band1] );
 					getBand(4, 2).setAttribute("fill", colourMap[colours.band2] );
@@ -66,7 +101,7 @@
 				}
 
 				function go5(){
-					var colours = getColoursFromInput();
+					var colours = getColoursFromInput(5);
 
 					getBand(5, 1).setAttribute("fill",colourMap[colours.band1] );
 					getBand(5, 2).setAttribute("fill",colourMap[colours.band2] );
@@ -75,13 +110,17 @@
 					getBand(5, 5).setAttribute("fill",colourMap[colours.band5] );
 				}
 
-				function getColoursFromInput() {
-					var values = $("#resistance").val().replace(/\s+/g, "").split(",");
+				
+				function getColoursFromInput(bands) {
+					var values = $("#resistance").val().replace(/\s+/g, "").split(",");					
+
+
+					// var resistance = parseFloat(values[0], 10);
 					var resistance = values[0];
 					var tolerance = parseInt(values[1], 10);
-					var colours = resistor.resistorToColor(resistance, tolerance);
-
-					console.log(resistance, tolerance, colours);
+					var colours = resistor.resistorToColor(resistance, tolerance, bands);
+					console.log(colours);
+					
 					return colours;
 				}
 
@@ -91,16 +130,25 @@
 					return band;
 				}
 
-				$("#resistance").on("input", function() {
-					updateResistorInput();
+				
+				$("#band4").on("mouseover", function(){
+					$("#band5").css("opacity", "0.3");
+					$("#band4").css("opacity", "1");
 				});
+				$("#band5").on("mouseover", function(){
+					$("#band4").css("opacity", "0.3");
+					$("#band5").css("opacity", "1");
+				});			
+				$("#band4,#band5").on("mouseout", function(){
+					$("#band4,#band5").css("opacity","1");
+				})
 
 				function updateResistorInput() {
 
 					var $res = $('#resistance');
 					var resistance = $res.val();
 					var matches = resistance.match( /^\s*([\d.]+) ?[kmKM]?\s*$/ );
-					console.log( matches );
+
 
 					if( matches && matches.length > 0 ) {
 						$res.addClass('correct');
@@ -112,7 +160,12 @@
 						$res.addClass('incorrect');
 						$res.removeClass('correct');
 					}
+					
 				}
+
+
+
+				
 
 			});
 		</script>

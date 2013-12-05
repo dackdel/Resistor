@@ -43,12 +43,12 @@ table {
 }
 /*CSS RESET END*/
 
-.left {
+#band4 {
 	width: 50%;
 	float: left;
 	text-align: center;
 }
-.right {
+#band5 {
 	width: 50%;
 	height: 500px;
 	float: left;
@@ -58,13 +58,34 @@ table {
 object {
 	max-width: 80%;
 }
-.left,.right {
+#band4,#band5 {
 	-webkit-transition: opacity 0.3s ease-out;
-	opacity: 0.8;
+	/*opacity: 0.4;*/
 }
 
-.left:hover,.right:hover{
-	opacity: 1;
+h2{
+	text-align: center;
+	font-size: 44px;
+	font-family: 'Share Tech', sans-serif;
+	margin-top: 45px;
+	margin-bottom: -45px;
+	border-bottom: 3px solid #000000;
+	display: inline-block;
+	color: #000000;
+}
+
+#band4 h2 {
+	
+	border-bottom-color: #d9b477;
+}
+
+#band5 h2 {
+	
+	border-bottom-color: #7bc6b8;
+}
+
+#band4:hover,#band5:hover{
+	/*opacity: 1;*/
 }
 .center {
 	width: 80%;
@@ -72,7 +93,7 @@ object {
 	text-align: center;
 	margin:0 auto;
 }
-.button {
+#btn {
 	  border: 0 none;
 	  border-radius: 3px 3px 3px 3px;
 	  color: #FFFFFF;
@@ -95,7 +116,7 @@ object {
 	  animation-duration: 2s;
    	  animation-name: pulse;
 }
-.button:hover {
+#btn:hover {
     background: #0AF;
     color: $white;
     animation:none;
@@ -117,10 +138,9 @@ object {
   }
 }
 
-
-.input {
+#resistance {
 	display: block;
-	font-size: 18px;
+	font-size: 28px;
 	color: #08c;
 	width: 60%;
 	margin: 10px auto;
@@ -131,19 +151,18 @@ object {
 	opacity: 0.5;
 }
 
-.input:focus, .input:hover {
+#resistance:focus, #resistance:hover {
 	  	opacity: .8;
-   		border: 1px solid #08c;
+   		border: 1px solid #08a;
    		box-shadow: 0 1px 0 #2392F3 inset, 0 -1px 0 #2392F3 inset, 1px 0 0 #2392F3 inset, -1px 0 0 #2392F3 inset, 0 0 4px rgba(35,146,243,0.5);
 }
 
-
 input.correct {
-	color: green;
+	color: green !important;
 }
 
 input.incorrect {
-	color: red;
+	color: red !important;
 }
 
 
